@@ -12,7 +12,13 @@ Also, don't run this on any domains, or subdomains of any domain that you have s
 ### Creating a sandbox
 
 ```html
-<script src="https://sandboxjs.foo/lib.js"></script>
+<script type="module">
+  import SbJS from 'https://sandboxjs.foo/lib/lib.mjs'; // lib is also exposed as window.sandboxjs - use https://sandboxjs.foo/lib/lib.cjs alongside the window object if you're on commonjs.
+  (async()=>{
+    const sandbox = await SbJS.init(); // resolves when the iframe is loaded and ready to be used.
+    sandbox.run('alert(document.location.href)'); // runs the code in the iframe.
+  })();
+</script>
 ```
 
 documentation is incomplete ok

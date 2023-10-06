@@ -1,12 +1,24 @@
 let host = null as string | null;
 let frames: HTMLIFrameElement[] = [];
+type Evaluate = (funcBody: string) => Promise<{
+  success: true;
+  result: any;
+} | {
+  success: false;
+  error: any;
+}>
+export type Sandbox = {
+  evaluate: Evaluate;
+  run: Evaluate;
+  contentWindow: Window | null;
+}
 export const overwriteHost = (newHost: string) => {
   host = newHost;
   frames.forEach((frame) => {
     frame.src = `${host ?? 'https://sandboxjs.foo'}/?proxy`
   })
 };
-export const init = () => new Promise(resolve => {
+export const init = () => new Promise<Sandbox>(resolve => {
   const frame = document.createElement('iframe');
   frame.allow = 'encrypted-media';
   frame.src = `${host ?? 'https://sandboxjs.foo'}/?proxy`
@@ -16,25 +28,27 @@ export const init = () => new Promise(resolve => {
   const listener = async (e: MessageEvent) => {
     if (e.data && e.data.sbjs_ready) {
       // sandbox is ready
+      const run = (funcBody: string) => new Promise<{
+        success: true;
+        result: any;
+      } | {
+        success: false;
+        error: any;
+      }>((resolve, reject) => {
+        const id = 'sbjs_eval_' + Math.random().toString(36).substring(7);
+        listenersById[id] = resolve;
+        contentWindow = contentWindow ?? frame.contentWindow;
+        if (contentWindow === null)
+          return reject('contentWindow is null');
+        contentWindow?.postMessage({
+          sbx: true,
+          code: funcBody,
+          id,
+        }, '*');
+      });
       resolve({
-        evaluate: (funcBody: string) => new Promise<{
-          success: true;
-          result: any;
-        } | {
-          success: false;
-          error: any;
-        }>((resolve, reject) => {
-          const id = 'sbjs_eval_' + Math.random().toString(36).substring(7);
-          listenersById[id] = resolve;
-          contentWindow = contentWindow ?? frame.contentWindow;
-          if (contentWindow === null)
-            return reject('contentWindow is null');
-          contentWindow?.postMessage({
-            sbx: true,
-            code: funcBody,
-            id,
-          }, '*');
-        }),
+        evaluate: run,
+        run,
         contentWindow,
       });
     } else if (e.data && e.data.sbxRs) {
@@ -64,7 +78,10 @@ export const init = () => new Promise(resolve => {
   frame.style.left = '-10000vw';
   (document.body ?? document.head).appendChild(frame);
 })
-export default init;
+
+const lib = { init }
+
+export default lib;
 
 // @ts-ignore
-if (typeof window !== 'undefined') window.sandboxjs = { init };
+if (typeof window !== 'undefined') window.sandboxjs = lib;
