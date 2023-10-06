@@ -8,12 +8,18 @@ if (usp.get('proxy') !== null) {
 
   const frame = document.createElement('iframe');
   frame.src = `/?sbx&${usp.get('debug') !== null ? 'debug&' : ''}${usp.get('ready') !== null ? 'ready&' : ''}hi`;
-  frame.sandbox.add('allow-scripts');
-  frame.sandbox.add('allow-same-origin');
-  frame.sandbox.add('allow-popups');
-  frame.sandbox.add('allow-forms');
-  frame.sandbox.add('allow-downloads');
-  frame.sandbox.add('allow-modals');
+  const sandboxes = [
+    'allow-scripts',
+    'allow-same-origin',
+    'allow-popups',
+    'allow-forms',
+    'allow-downloads',
+    'allow-modals',
+    ...usp.get('allowSandboxItems')?.split(',').map(v => v.toLowerCase().trim()) ?? [],
+  ];
+  const disallowSandboxItems = usp.get('disallowSandboxItems')?.split(',').map(v => v.toLowerCase().trim()) ?? [];
+  sandboxes.filter(s => !disallowSandboxItems.includes(s.replace('allow-', ''))).forEach(s => frame.sandbox.add(s));
+  frame.allow = 'autoplay fullscreen';
   frame.style.display = 'block';
   frame.style.width = '100vw';
   frame.style.height = '100vh';
@@ -26,7 +32,8 @@ if (usp.get('proxy') !== null) {
   // add event listener for proxying to iframe
   const listener = (event: MessageEvent) => {
     if (event.data && event.data.sbx) {
-      console.log('[sbjs] event send to inner', event);
+      if (usp.get('debug') !== null)
+        console.log('[sbjs] event send to inner', event);
       // send to iframe
       frame.contentWindow?.postMessage(event.data, '*');
     }
@@ -35,7 +42,8 @@ if (usp.get('proxy') !== null) {
   // add event listener for proxying from iframe
   const listener2 = (event: MessageEvent) => {
     if (event.data && event.data.sbxRs) {
-      console.log('[sbjs] event send to parent', event);
+      if (usp.get('debug') !== null)
+        console.log('[sbjs] event send to parent', event);
 
       // send to parent
       window.parent.postMessage(event.data, '*');
@@ -45,8 +53,8 @@ if (usp.get('proxy') !== null) {
 } else {
   // handle main
   const sbx = usp.get('sbx')
-  if (sbx === undefined && window.location.pathname !== '/docs/')
-    window.location.href = '/docs/'
+  if (sbx === undefined && !window.location.pathname.startsWith('/docs'))
+    window.location.replace('/docs/');
   else {
     // listen to iframe events
     const listener = async (event: MessageEvent) => {
