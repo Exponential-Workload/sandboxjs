@@ -6,7 +6,8 @@ set -e
 
 # move out to temp
 rm -rf /tmp/out.sbjs
-mv out /tmp/out.sbjs
+cp -r out /tmp/out.sbjs
+rm -rf out
 
 # hard reset deploy branch to first commit
 git checkout deploy
