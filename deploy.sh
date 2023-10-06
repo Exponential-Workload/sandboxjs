@@ -18,11 +18,8 @@ cp -r .git /tmp/build/.git
 cd /tmp/build
 git checkout deploy
 
-# get last commit id on this branch
-LAST_DEPLOY_COMMIT_ID=$(git rev-parse HEAD)
-
-# go to first commit
-git reset --hard $(git rev-list --max-parents=0 HEAD)
+# go to last commit on deploy branch
+git reset --hard HEAD
 
 # copy
 cp -r $DIR/out/* /tmp/build/
@@ -31,9 +28,10 @@ cp $DIR/.domains /tmp/build/
 # commit
 git add --all
 git add . .domains
-git commit -m "deploy: $COMMIT_ID (Last Deployment: $LAST_DEPLOY_COMMIT_ID)$(echo -e "\nCommit:\n$COMMIT_MESSAGE")"
+git commit -m "deploy: $COMMIT_ID$(echo -e "\nCommit:\n$COMMIT_MESSAGE")"
 git push origin deploy --force
 
 # clean
 cd -;
 rm -rf /tmp/build;
+git fetch origin;
