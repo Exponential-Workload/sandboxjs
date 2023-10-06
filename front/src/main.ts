@@ -7,18 +7,9 @@ if (usp.get('proxy') !== null) {
   document.querySelector('#app')?.remove();
 
   const frame = document.createElement('iframe');
-  frame.src = `/?sbx&${usp.get('debug') !== null ? 'debug&' : ''}${usp.get('ready') !== null ? 'ready&' : ''}hi`;
-  const sandboxes = [
-    'allow-scripts',
-    'allow-same-origin',
-    'allow-popups',
-    'allow-forms',
-    'allow-downloads',
-    'allow-modals',
-    ...usp.get('allowSandboxItems')?.split(',').map(v => v.toLowerCase().trim()) ?? [],
-  ];
-  const disallowSandboxItems = usp.get('disallowSandboxItems')?.split(',').map(v => v.toLowerCase().trim()) ?? [];
-  sandboxes.filter(s => !disallowSandboxItems.includes(s.replace('allow-', ''))).forEach(s => frame.sandbox.add(s));
+  frame.src = `/?sbxid&${usp.get('debug') !== null ? 'debug&' : ''}${usp.get('ready') !== null ? 'ready&' : ''}`;
+  const sbx = usp.getAll('sandbox').flatMap(v => v.split(/[+,; ]/gui));
+  sbx.forEach(s => frame.sandbox.add(s));
   frame.allow = 'autoplay fullscreen';
   frame.style.display = 'block';
   frame.style.width = '100vw';
@@ -52,10 +43,13 @@ if (usp.get('proxy') !== null) {
   window.addEventListener('message', listener2);
 } else {
   // handle main
-  const sbx = usp.get('sbx')
+  const sbx = usp.get('sbxid')
   if (sbx === undefined && !window.location.pathname.startsWith('/docs'))
     window.location.replace('/docs/');
   else {
+    try {
+      history.replaceState(null, '', '/');
+    } catch (error) { }
     // listen to iframe events
     const listener = async (event: MessageEvent) => {
       let data = event.data

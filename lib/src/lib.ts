@@ -56,6 +56,36 @@ export class Sandbox {
     return true;
   }
 
+  private _sandboxParams = [] as string[];
+  public readonly sandbox = {
+    getAll: () => {
+      return [...this._sandboxParams];
+    },
+    get: (key: string) => {
+      return this._sandboxParams.includes(key);
+    },
+    /** Needs to be called prior to init() - to modify parameters, call kill(), call this, then init() again */
+    add: (key: string) => {
+      this._sandboxParams.push(key);
+
+      this.frames.forEach((frame) =>
+        frame.sandbox.add(key)
+      );
+
+      this.parameters.set('sandbox', this._sandboxParams.join('+'));
+    },
+    /** Needs to be called prior to init() - to modify parameters, call kill(), call this, then init() again */
+    remove: (key: string) => {
+      this._sandboxParams.splice(this._sandboxParams.indexOf(key), 1);
+
+      this.frames.forEach((frame) =>
+        frame.sandbox.remove(key)
+      );
+
+      this.parameters.set('sandbox', this._sandboxParams.join('+'));
+    },
+  };
+
   /** Frame load timeout */
   public timeout = 8192;
 
@@ -67,6 +97,7 @@ export class Sandbox {
     getAll: () => {
       return { ...this.params };
     },
+    /** Needs to be called prior to init() - to modify parameters, call kill(), call this, then init() again */
     set: (key: string, value: string | boolean): void => {
       this.params[key] = value;
     },
@@ -77,8 +108,16 @@ export class Sandbox {
    * @param host The host to use for the sandbox
    */
   constructor() {
-    this.parameters.set('sbx', this.sandboxId);
+    this.parameters.set('sbxid', this.sandboxId);
     this.parameters.set('proxy', true);
+    [
+      'allow-scripts',
+      'allow-same-origin',
+      'allow-popups',
+      'allow-forms',
+      'allow-downloads',
+      'allow-modals',
+    ].forEach((k) => this.sandbox.add(k));
   }
 
   /**
@@ -106,9 +145,12 @@ export class Sandbox {
         id,
         sandboxId: this.sandboxId,
       };
-      this.listenersById[id] = resolve;
+      this.listenersById[id] = (a: ExecutionResponse) => {
+        delete this.listenersById[id];
+        resolve(a);
+      };
       this.contentWindow = this.contentWindow ?? this.frames[0]?.contentWindow;
-      if (this.contentWindow === null || this.contentWindow === undefined || this.contentWindow.closed === true || this.contentWindow.location.href === 'about:blank' || this.contentWindow.location.href === null) {
+      if (this.contentWindow === null || this.contentWindow === undefined || this.contentWindow.closed === true) {
         this.executionQueue.push(obj);
         (async () => {
           await new Promise((res) => setTimeout(res, this.timeout));
@@ -133,10 +175,11 @@ export class Sandbox {
   /**
    * Initializes the sandbox
    */
-  public async init(): Promise<void> {
+  public async init(): Promise<this> {
     const frame = document.createElement('iframe');
     frame.allow = 'encrypted-media';
-    frame.src = `${this.host ?? 'https://sandboxjs.foo'}/?proxy&sbx=${this.sandboxId}`;
+    this.sandbox.getAll().forEach(k => frame.sandbox.add(k));
+    frame.src = `${this.host ?? 'https://sandboxjs.foo'}/?proxy&sbxid=${this.sandboxId}&${Object.entries(this.params).map(([key, value]) => `${key}=${value}`).join('&')}`;
     this.frames.push(frame);
     this.contentWindow = frame.contentWindow;
 
@@ -191,6 +234,8 @@ export class Sandbox {
 
     await promise;
     this.executeQueue();
+
+    return this;
   };
 
   /**

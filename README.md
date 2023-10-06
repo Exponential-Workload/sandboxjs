@@ -13,10 +13,11 @@ Also, don't run this on any domains, or subdomains of any domain that you have s
 
 ```html
 <script type="module">
-  import SbJS from 'https://sandboxjs.foo/lib/lib.mjs'; // lib is also exposed as window.sandboxjs - use https://sandboxjs.foo/lib/lib.cjs alongside the window object if you're on commonjs.
+  import SbJS from 'https://sandboxjs.foo/lib/lib.mjs'; // lib is also exposed as window.SandboxJS - use https://sandboxjs.foo/lib/lib.cjs alongside the window object if you're on commonjs.
   (async()=>{
-    const sandbox = await SbJS.init(); // resolves when the iframe is loaded and ready to be used.
-    sandbox.run('alert(document.location.href)'); // runs the code in the iframe.
+    const sbx = await (new SandboxJS()
+                            .init()); // resolves when the iframe is loaded and ready to go - this should be called before any other methods. You are not required to chain this, but you can.
+    const returnValue = await sbx.run('alert(window.location.href);\nreturn `Hi from ${window.location.href}`;') // alerts 'https://sandboxjs.foo/' and returns 'Hi from https://sandboxjs.foo/'
   })();
 </script>
 ```
