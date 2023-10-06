@@ -53,6 +53,7 @@ extra:
 
 nav:
   - Welcome: index.md
+  - Usage: usage.md
 
 site_description: Iframe-based JS Sandbox
 
