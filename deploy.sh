@@ -13,7 +13,8 @@ git checkout deploy
 git reset --hard $(git rev-list --max-parents=0 HEAD)
 
 # move out back
-mv /tmp/out.sbjs/* ./
+cp -r /tmp/out.sbjs/* ./
+rm -rf /tmp/out.sbjs
 
 # commit
 git add out
