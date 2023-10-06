@@ -38,7 +38,7 @@ git add .
 
 # Push to codeberg
 git cb || 1; # custom alias for configuring for codeberg
-cp $DIR/README.pages.md README.md
+cp $DIR/pagesreadme.md README.md
 git commit -m "deploy: $COMMIT_ID$(echo -e "\nCommit $COMMIT_MESSAGE")" --allow-empty
 git remote set-url origin git@codeberg.org:Expo/sbjs.git
 git push origin pages --force
@@ -46,7 +46,7 @@ git push origin pages --force
 # Push to github
 git gh || 1; # custom alias for configuring for github
 git reset --soft HEAD~1
-cp $DIR/README.gh.md README.md
+cp $DIR/ghreadme.md README.md
 echo -n "sandboxjs.foo" > CNAME && git add CNAME
 git commit -m "deploy: $COMMIT_ID$(echo -e "\nCommit: $COMMIT_MESSAGE")" --allow-empty
 git remote set-url origin git@github.com:Exponential-Workload/sandboxjs.git
@@ -63,8 +63,8 @@ cp -r $DIR /tmp/sb.mirror
 cd /tmp/sb.mirror
 git gh || 1; # custom alias for configuring for github
 git reset --soft HEAD~1
-cat $DIR/README.gh.md README.md > README.tmp.md
-rm README.gh.md README.pages.md
+cat $DIR/ghreadme.md README.md > README.tmp.md
+rm ghreadme.md pagesreadme.md
 mv README.tmp.md README.md
 git add .
 git commit -m "mirror: Push to $COMMIT_ID$(echo -e "\nNote: Excluding the latest commit (this one), these are signed by the codeberg key.\nCommit: $COMMIT_MESSAGE")" --allow-empty
