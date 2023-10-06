@@ -30,7 +30,7 @@ cp $DIR/.domains /tmp/build/
 # commit
 git add --all
 git add . .domains
-git commit -m "deploy: $COMMIT_ID$(echo -e "\nCommit:\n$COMMIT_MESSAGE")"
+git commit -m "deploy: $COMMIT_ID$(echo -e "\nCommit:\n$COMMIT_MESSAGE")" --allow-empty
 git push origin deploy --force
 
 # clean
