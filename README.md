@@ -9,6 +9,8 @@ Also, don't run this on any domains, or subdomains of any domain that you have s
 
 ## Usage
 
+documentation is incomplete ok
+
 ### Creating a sandbox
 
 ```html
@@ -22,4 +24,61 @@ Also, don't run this on any domains, or subdomains of any domain that you have s
 </script>
 ```
 
-documentation is incomplete ok
+### Setting the sandbox= attribute on the iframe
+
+```ts
+const sbx = new SandboxJS();
+sbx.sandbox.add('allow-modals'); // adds the allow-modals sandbox attribute to the iframe
+sbx.sandbox.remove('allow-modals'); // removes the allow-modals sandbox attribute from the iframe
+```
+
+### Resetting a Sandbox
+
+> Sandboxes can have their state messed up - ie via reload()s, or via navigation.<br/>
+> In addition, if you modify params, or the ADD to sandbox options, they can't retroactively be applied to the sandbox.<br/>
+> In scenarios like these, you need to reset the sandbox.
+
+To reset a sandbox, you need to kill() it, and re-init() it.
+
+An example of doing this for navigation is this:
+```ts
+// Create a sandbox
+const sbx = await (new SandboxJS()
+                            .init());
+
+// Mess up the sandbox
+sbx.run(`window.location.href = 'https://example.com/'`);
+
+// Reset the sandbox
+sbx.kill();
+await sbx.init();
+
+// The sandbox is now reset
+await sbx.run(`return window.location.href;`); // returns 'https://sandboxjs.foo/', not 'https://example.com/'
+```
+
+Another example of changing sandbox options post-load is this:
+```ts
+// Create a sandbox
+const sbx = new SandboxJS();
+sbx.sandbox.remove('allow-modals'); // you can call .remove() on any of the sandbox options, and it'll remove them from the sandbox
+await sbx.init();
+
+// Run something that's disallowed in the current policy
+await sbx.run(`alert('Hai!')`); // doesn't alert
+
+// Re-allow it
+sbx.sandbox.add('allow-modals');
+
+// Run something that's now allowed in the current policy
+await sbx.run(`alert('Hai 2!')`); // still doesn't alert
+
+// Reset the sandbox
+sbx.kill();
+await sbx.init();
+
+// The sandbox is now reset
+await sbx.run(`alert('Hai 3!')`); // alerts 'Hai 3!' successfully
+```
+
+> It's worth noting that, as the nested iframe's sandbox parameters are queried via a URL query parameter, if you remove a sandbox attribute post-init(), you can re-add it via sbx.sandbox.add() and it'll work again. This is, however, discouraged.

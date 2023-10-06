@@ -4,13 +4,13 @@ import './style.css'
 const usp = new URLSearchParams(window.location.search)
 // if ?proxy is present, create iframe to /?sbx, and proxy all messages from/to it
 if (usp.get('proxy') !== null) {
+  const sbxId = usp.get('sbxid');
   document.querySelector('#app')?.remove();
 
   const frame = document.createElement('iframe');
   frame.src = `/?sbxid&${usp.get('debug') !== null ? 'debug&' : ''}${usp.get('ready') !== null ? 'ready&' : ''}`;
   const sbx = usp.getAll('sandbox').flatMap(v => v.split(/[+,; ]/gui));
   sbx.forEach(s => frame.sandbox.add(s));
-  frame.allow = 'autoplay fullscreen';
   frame.style.display = 'block';
   frame.style.width = '100vw';
   frame.style.height = '100vh';
@@ -35,6 +35,8 @@ if (usp.get('proxy') !== null) {
     if (event.data && event.data.sbxRs) {
       if (usp.get('debug') !== null)
         console.log('[sbjs] event send to parent', event);
+      if (sbxId !== null && event.data.sandboxId && event.data.sandboxId !== sbxId)
+        return;
 
       // send to parent
       window.parent.postMessage(event.data, '*');

@@ -47,12 +47,12 @@ export class Sandbox {
   protected executionQueue: { sbx: true; code: string; id: string, sandboxId: string, }[] = [];
   protected executeQueue() {
     if (!this.contentWindow) return false;
-    const executionQueue = this.executionQueue;
-    this.executionQueue = [];
-    executionQueue.forEach((data) => {
-      console.log('[sbjs] executing', data);
+    while (this.executionQueue.length > 0) {
+      const data = this.executionQueue.shift();
+      if (this.host === 'http://localhost:5173')
+        console.log('[sbjs] executing', data);
       this.contentWindow?.postMessage(data, '*');
-    });
+    };
     return true;
   }
 
@@ -64,7 +64,7 @@ export class Sandbox {
     get: (key: string) => {
       return this._sandboxParams.includes(key);
     },
-    /** Needs to be called prior to init() - to modify parameters, call kill(), call this, then init() again */
+    /** Needs to be called prior to init() - to modify parameters, call kill(), call this, then init() again. */
     add: (key: string) => {
       this._sandboxParams.push(key);
 
@@ -74,13 +74,15 @@ export class Sandbox {
 
       this.parameters.set('sandbox', this._sandboxParams.join('+'));
     },
-    /** Needs to be called prior to init() - to modify parameters, call kill(), call this, then init() again */
-    remove: (key: string) => {
-      this._sandboxParams.splice(this._sandboxParams.indexOf(key), 1);
+    /** You should reset the sandbox after this, however as the root sandbox is directly affected, the nested one should be fine without needing you to reset. */
+    remove: (...keys: string[]) => {
+      keys.forEach(key => {
+        this._sandboxParams.splice(this._sandboxParams.indexOf(key), 1)
 
-      this.frames.forEach((frame) =>
-        frame.sandbox.remove(key)
-      );
+        this.frames.forEach((frame) =>
+          frame.sandbox.remove(key)
+        );
+      });
 
       this.parameters.set('sandbox', this._sandboxParams.join('+'));
     },
@@ -146,12 +148,20 @@ export class Sandbox {
         sandboxId: this.sandboxId,
       };
       this.listenersById[id] = (a: ExecutionResponse) => {
-        delete this.listenersById[id];
+        if (this.host === 'http://localhost:5173')
+          this.listenersById[id] = (data) => {
+            console.warn('[sbjs] duplicate listener call', {
+              id,
+              data,
+              err: new Error('Duplicate listener call'),
+            });
+            resolve(data);
+          };
         resolve(a);
       };
       this.contentWindow = this.contentWindow ?? this.frames[0]?.contentWindow;
+      this.executionQueue.push(obj);
       if (this.contentWindow === null || this.contentWindow === undefined || this.contentWindow.closed === true) {
-        this.executionQueue.push(obj);
         (async () => {
           await new Promise((res) => setTimeout(res, this.timeout));
           if (this.executionQueue.includes(obj)) {
@@ -159,9 +169,7 @@ export class Sandbox {
             reject('Frame load timed out');
           };
         })();
-        return;
-      }
-      this.contentWindow.postMessage(obj, '*');
+      } else this.executeQueue();
     });
   }
 
@@ -177,9 +185,8 @@ export class Sandbox {
    */
   public async init(): Promise<this> {
     const frame = document.createElement('iframe');
-    frame.allow = 'encrypted-media';
     this.sandbox.getAll().forEach(k => frame.sandbox.add(k));
-    frame.src = `${this.host ?? 'https://sandboxjs.foo'}/?proxy&sbxid=${this.sandboxId}&${Object.entries(this.params).map(([key, value]) => `${key}=${value}`).join('&')}`;
+    frame.src = `${this.host ?? 'https://sandboxjs.foo'}/?proxy&${Object.entries(this.params).map(([key, value]) => `${key}=${value}`).join('&')}`;
     this.frames.push(frame);
     this.contentWindow = frame.contentWindow;
 
@@ -201,7 +208,8 @@ export class Sandbox {
           return console.error('[sbjs] data.id is not a string');
         }
         if (typeof this.listenersById[data.id] !== 'function') {
-          return console.error('[sbjs] listener is not a function');
+          console.warn(new Error(`[sbjs] listener is not a function (id: ${data.id})`))
+          return;
         }
         this.listenersById[data.id](data);
       }
@@ -245,6 +253,10 @@ export class Sandbox {
     this.frames.forEach((frame) => {
       frame.remove();
     });
+    this.frames = [];
+    this.contentWindow = null;
+    this.executionQueue = [];
+    this.listenersById = {};
   };
 }
 
