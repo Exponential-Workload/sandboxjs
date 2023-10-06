@@ -16,11 +16,11 @@ cp -r .git /tmp/build/.git
 
 # checkout
 cd /tmp/build
-git checkout deploy
+git checkout pages
 
 # get all commits
 git fetch;
-git pull --set-upstream origin deploy
+git pull --set-upstream origin pages
 
 # go to most recent commit
 git reset --hard HEAD
@@ -38,7 +38,7 @@ cp $DIR/_domains /tmp/build/_domains
 git add --all
 git add . .domains
 git commit -m "deploy: $COMMIT_ID$(echo -e "\nCommit $COMMIT_MESSAGE")" --allow-empty
-git push origin deploy --force
+git push origin pages --force
 
 # clean
 cd -;
