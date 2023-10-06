@@ -22,11 +22,12 @@ git checkout deploy
 git fetch;
 git pull --set-upstream origin deploy
 
-# go to first commit on deploy branch
-git reset --hard $(git rev-list --max-parents=0 HEAD)
-
-# soft-reset to last commit on deploy branch
-git reset --soft HEAD
+# go to most recent commit
+git reset --hard HEAD
+# remove everything
+git rm -rf .
+# get back README.md
+git checkout HEAD -- README.md
 
 # copy
 cp -r $DIR/out/* /tmp/build/
@@ -36,7 +37,7 @@ cp $DIR/_domains /tmp/build/_domains
 # commit
 git add --all
 git add . .domains
-git commit -m "deploy: $COMMIT_ID$(echo -e "\nCommit:\n$COMMIT_MESSAGE")" --allow-empty
+git commit -m "deploy: $COMMIT_ID$(echo -e "\nCommit $COMMIT_MESSAGE")" --allow-empty
 git push origin deploy --force
 
 # clean
