@@ -13,7 +13,6 @@ COMMIT_ID=$(git rev-parse HEAD)
 rm -rf /tmp/build
 mkdir -p /tmp/build
 cp -r .git /tmp/build/.git
-cp -r .domains /tmp/build/.domains
 
 # checkout
 cd /tmp/build
@@ -27,6 +26,7 @@ git reset --hard $(git rev-list --max-parents=0 HEAD)
 
 # copy
 cp -r $DIR/out/* /tmp/build/
+cp $DIR/.domains /tmp/build/
 
 # commit
 git add --all
