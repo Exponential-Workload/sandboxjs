@@ -47,6 +47,7 @@ git push origin pages --force
 git gh || 1; # custom alias for configuring for github
 git reset --soft HEAD~1
 cp $DIR/README.gh.md README.md
+echo -n "sandboxjs.foo" > CNAME && git add CNAME
 git commit -m "deploy: $COMMIT_ID$(echo -e "\nCommit: $COMMIT_MESSAGE")" --allow-empty
 git remote set-url origin git@github.com:Exponential-Workload/sandboxjs.git
 git push origin pages --force
