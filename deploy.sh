@@ -4,25 +4,27 @@ set -e
 # build
 ./build.sh
 
-# move out to temp
-rm -rf /tmp/out.sbjs
-cp -r out /tmp/out.sbjs
-rm -rf out
+# copy the git dir
+rm -rf /tmp/build
+mkdir -p /tmp/build
+cp -r .git /tmp/build/.git
 
-# hard reset deploy branch to first commit
+# checkout
+cd /tmp/build
 git checkout deploy
+
+# go to first commit
 git reset --hard $(git rev-list --max-parents=0 HEAD)
 
-# move out back
-cp -r /tmp/out.sbjs/* ./
-rm -rf /tmp/out.sbjs
+# copy
+cp -r out/* /tmp/build/
 
 # commit
-git add out
-git commit -m "feat: deploy @ $(date '+%Y-%m-%d %H:%M:%S')"
-
-# push
+git add --all
+git add .
+git commit -m "deploy"
 git push origin deploy --force
 
-# back to primary branch
-git checkout senpai
+# clean
+cd -;
+rm -rf /tmp/build;
