@@ -2,6 +2,10 @@
 set -e
 DIR=$(pwd)
 
+# get last commit message
+COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+COMMIT_ID=$(git rev-parse HEAD)
+
 # build
 ./build.sh
 
@@ -21,13 +25,13 @@ git reset --hard $(git rev-list --max-parents=0 HEAD)
 # copy
 cp -r $DIR/out/* /tmp/build/
 
-# get last commit message
-COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+# get last commit id on this branch
+LAST_DEPLOY_COMMIT_ID=$(git rev-parse HEAD)
 
 # commit
 git add --all
 git add .
-git commit -m "deploy: $COMMIT_MESSAGE"
+git commit -m "deploy: $COMMIT_ID (Last Deployment: $LAST_DEPLOY_COMMIT_ID)$(echo -e "\n$COMMIT_MESSAGE"))"
 git push origin deploy --force
 
 # clean
