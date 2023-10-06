@@ -31,7 +31,7 @@ LAST_DEPLOY_COMMIT_ID=$(git rev-parse HEAD)
 # commit
 git add --all
 git add . .domains
-git commit -m "deploy: $COMMIT_ID (Last Deployment: $LAST_DEPLOY_COMMIT_ID)$(echo -e "\n$COMMIT_MESSAGE"))"
+git commit -m "deploy: $COMMIT_ID (Last Deployment: $LAST_DEPLOY_COMMIT_ID)$(echo -e "\nCommit:\n$COMMIT_MESSAGE")"
 git push origin deploy --force
 
 # clean
