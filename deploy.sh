@@ -65,6 +65,7 @@ git reset --soft HEAD~1
 cat $DIR/README.gh.md README.md > README.tmp.md
 rm README.gh.md README.pages.md
 mv README.tmp.md README.md
+git add .
 git commit -m "mirror: Push to $COMMIT_ID$(echo -e "\nCommit $COMMIT_MESSAGE")" --allow-empty
 git remote set-url origin git@github.com:Exponential-Workload/sandboxjs.git
 git push origin senpai --force
