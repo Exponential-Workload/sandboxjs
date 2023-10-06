@@ -14,3 +14,5 @@ Also, don't run this on any domains, or subdomains of any domain that you have s
 ```html
 <script src="https://sandboxjs.foo/lib.js"></script>
 ```
+
+documentation is incomplete ok
