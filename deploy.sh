@@ -34,7 +34,7 @@ cp -r $DIR/out/* /tmp/build/
 
 # commit
 git add --all
-git add . .domains
+git add .
 
 # Push to codeberg
 git cb || 1; # custom alias for configuring for codeberg
@@ -54,4 +54,19 @@ git push origin pages --force
 # clean
 cd -;
 rm -rf /tmp/build;
+
+# push github mirror
+cp -r $DIR /tmp/mirror
+
+# push
+cd /tmp/mirror
+git gh || 1; # custom alias for configuring for github
+git commit -m "mirror: Push to $COMMIT_ID$(echo -e "\nCommit $COMMIT_MESSAGE")" --allow-empty
+git reset --soft HEAD~1
+git remote set-url origin git@github.com:Exponential-Workload/sandboxjs.git
+git push origin senpai --force
+
+# clean
+rm -rf /tmp/mirror;
+cd -;
 git fetch origin;
