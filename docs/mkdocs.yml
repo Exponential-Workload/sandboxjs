@@ -55,6 +55,7 @@ nav:
   - Welcome: index.md
   - Installation: installation.md
   - Usage: usage.md
+  - Mirrors: mirrors.md
 
 site_description: Iframe-based JS Sandbox
 
