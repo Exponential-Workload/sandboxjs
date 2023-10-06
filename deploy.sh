@@ -31,13 +31,24 @@ git checkout HEAD -- README.md
 
 # copy
 cp -r $DIR/out/* /tmp/build/
-cp $DIR/_domains /tmp/build/.domains
-cp $DIR/_domains /tmp/build/_domains
 
 # commit
 git add --all
 git add . .domains
+
+# Push to codeberg
+git cb || 1; # custom alias for configuring for codeberg
+cp $DIR/README.pages.md README.md
 git commit -m "deploy: $COMMIT_ID$(echo -e "\nCommit $COMMIT_MESSAGE")" --allow-empty
+git remote set-url origin git@codeberg.org:Expo/sbjs.git
+git push origin pages --force
+
+# Push to github
+git gh || 1; # custom alias for configuring for github
+git reset --soft HEAD~1
+cp $DIR/README.gh.md README.md
+git commit -m "deploy: $COMMIT_ID$(echo -e "\nCommit $COMMIT_MESSAGE")" --allow-empty
+git remote set-url origin git@github.com:Exponential-Workload/sandboxjs.git
 git push origin pages --force
 
 # clean
