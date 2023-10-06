@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+DIR=$(pwd)
 
 # build
 ./build.sh
@@ -17,7 +18,7 @@ git checkout deploy
 git reset --hard $(git rev-list --max-parents=0 HEAD)
 
 # copy
-cp -r out/* /tmp/build/
+cp -r $DIR/out/* /tmp/build/
 
 # commit
 git add --all
