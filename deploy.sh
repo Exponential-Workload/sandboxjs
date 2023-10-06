@@ -25,7 +25,8 @@ git reset --hard HEAD
 
 # copy
 cp -r $DIR/out/* /tmp/build/
-cp $DIR/_domains /tmp/build/
+cp $DIR/_domains /tmp/build/.domains
+cp $DIR/_domains /tmp/build/_domains
 
 # commit
 git add --all
