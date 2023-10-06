@@ -19,14 +19,14 @@ cp -r .domains /tmp/build/.domains
 cd /tmp/build
 git checkout deploy
 
+# get last commit id on this branch
+LAST_DEPLOY_COMMIT_ID=$(git rev-parse HEAD)
+
 # go to first commit
 git reset --hard $(git rev-list --max-parents=0 HEAD)
 
 # copy
 cp -r $DIR/out/* /tmp/build/
-
-# get last commit id on this branch
-LAST_DEPLOY_COMMIT_ID=$(git rev-parse HEAD)
 
 # commit
 git add --all
