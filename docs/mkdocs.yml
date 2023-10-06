@@ -1,0 +1,61 @@
+site_name: SandboxJS
+theme:
+  name: material
+  logo: img/sandbucket-white.svg
+  favicon: img/sandbucket.svg
+  palette:
+    primary: deep purple
+    accent: deep purple
+    scheme: slate
+  features:
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.tracking
+    - navigation.expand
+    - navigation.path
+    - navigation.prune
+    - navigation.indexes
+    - toc.follow
+    - toc.integrate
+    - navigation.top
+    - navigation.footer
+    - content.tooltips
+
+extra_css:
+  - css/background.css
+
+site_url: https://sandboxjs.foo/docs/
+
+plugins:
+  - privacy
+  - social
+  - search
+  - tags
+
+markdown_extensions:
+  - abbr
+  - attr_list
+  - pymdownx.snippets
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - footnotes
+  - md_in_html
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+extra:
+  social:
+    - icon: github
+      link: https://github.com/Exponential-Workload/SandboxJS
+  homepage: /
+
+nav:
+  - Welcome: index.md
+
+site_description: Iframe-based JS Sandbox
+
+copyright: Copyright &copy; 2023 <span class="nexus">Expo</span>. Licensed under MIT.
+extra:
+  generator: false
