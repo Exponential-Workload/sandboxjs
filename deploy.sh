@@ -21,3 +21,6 @@ git commit -m "feat: deploy @ $(date '+%Y-%m-%d %H:%M:%S')"
 
 # push
 git push origin deploy --force
+
+# back to primary branch
+git checkout senpai

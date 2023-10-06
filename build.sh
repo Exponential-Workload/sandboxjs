@@ -1,4 +1,7 @@
 #!/bin/bash
+
+set -e;
+
 rm -rf out;
 cd front;
 pnpm build;
