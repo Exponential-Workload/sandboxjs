@@ -8,7 +8,7 @@ DIR=$(pwd)
 # copy the git dir
 rm -rf /tmp/build
 mkdir -p /tmp/build
-cp -r .git /tmp/buildd/.git
+cp -r .git /tmp/build/.git
 cp -r .domains /tmp/build/.domains
 
 # checkout
