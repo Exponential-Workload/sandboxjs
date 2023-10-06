@@ -21,10 +21,13 @@ git reset --hard $(git rev-list --max-parents=0 HEAD)
 # copy
 cp -r $DIR/out/* /tmp/build/
 
+# get last commit message
+COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+
 # commit
 git add --all
 git add .
-git commit -m "deploy"
+git commit -m "deploy: $COMMIT_MESSAGE"
 git push origin deploy --force
 
 # clean
