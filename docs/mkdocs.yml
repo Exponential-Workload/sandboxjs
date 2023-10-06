@@ -46,16 +46,13 @@ markdown_extensions:
       alternate_style: true
 
 extra:
-  social:
-    - icon: github
-      link: https://github.com/Exponential-Workload/SandboxJS
   homepage: /
 
 nav:
   - Welcome: index.md
   - Installation: installation.md
   - Usage: usage.md
-  - Mirrors: mirrors.md
+  - Source Code: mirrors.md
 
 site_description: Iframe-based JS Sandbox
 
