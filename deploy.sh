@@ -56,17 +56,19 @@ cd -;
 rm -rf /tmp/build;
 
 # push github mirror
-cp -r $DIR /tmp/mirror
+cp -r $DIR /tmp/sb.mirror
 
 # push
-cd /tmp/mirror
+cd /tmp/sb.mirror
 git gh || 1; # custom alias for configuring for github
-git commit -m "mirror: Push to $COMMIT_ID$(echo -e "\nCommit $COMMIT_MESSAGE")" --allow-empty
 git reset --soft HEAD~1
+cat $DIR/README.gh.md README.md > README.md
+rm README.gh.md README.pages.md
+git commit -m "mirror: Push to $COMMIT_ID$(echo -e "\nCommit $COMMIT_MESSAGE")" --allow-empty
 git remote set-url origin git@github.com:Exponential-Workload/sandboxjs.git
 git push origin senpai --force
 
 # clean
-rm -rf /tmp/mirror;
+rm -rf /tmp/sb.mirror;
 cd -;
 git fetch origin;
