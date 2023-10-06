@@ -19,6 +19,8 @@ cd /tmp/build
 git checkout deploy
 
 # go to last commit on deploy branch
+git fetch;
+git pull --set-upstream origin deploy
 git reset --hard HEAD
 
 # copy
