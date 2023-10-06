@@ -18,10 +18,15 @@ cp -r .git /tmp/build/.git
 cd /tmp/build
 git checkout deploy
 
-# go to last commit on deploy branch
+# get all commits
 git fetch;
 git pull --set-upstream origin deploy
-git reset --hard HEAD
+
+# go to first commit on deploy branch
+git reset --hard $(git rev-list --max-parents=0 HEAD)
+
+# soft-reset to last commit on deploy branch
+git reset --soft HEAD
 
 # copy
 cp -r $DIR/out/* /tmp/build/
