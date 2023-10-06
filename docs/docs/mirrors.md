@@ -2,9 +2,11 @@
 
 This repository has several mirrors.
 
-## [Source](https://codeberg.org/Expo/sbjs)
+## Source
 
 All repositories below mirror [this source repo](https://codeberg.org/Expo/sbjs).
+
+[View source repo](https://codeberg.org/Expo/sbjs){ .md-button .md-button--primary }
 
 ## Mirrors
 
