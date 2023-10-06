@@ -47,7 +47,7 @@ git push origin pages --force
 git gh || 1; # custom alias for configuring for github
 git reset --soft HEAD~1
 cp $DIR/README.gh.md README.md
-git commit -m "deploy: $COMMIT_ID$(echo -e "\nCommit $COMMIT_MESSAGE")" --allow-empty
+git commit -m "deploy: $COMMIT_ID$(echo -e "\nCommit: $COMMIT_MESSAGE")" --allow-empty
 git remote set-url origin git@github.com:Exponential-Workload/sandboxjs.git
 git push origin pages --force
 
@@ -66,7 +66,7 @@ cat $DIR/README.gh.md README.md > README.tmp.md
 rm README.gh.md README.pages.md
 mv README.tmp.md README.md
 git add .
-git commit -m "mirror: Push to $COMMIT_ID$(echo -e "\nCommit $COMMIT_MESSAGE")" --allow-empty
+git commit -m "mirror: Push to $COMMIT_ID$(echo -e "\nNote: Excluding the latest commit (this one), these are signed by the codeberg key.\nCommit: $COMMIT_MESSAGE")" --allow-empty
 git remote set-url origin git@github.com:Exponential-Workload/sandboxjs.git
 git push origin senpai --force
 
