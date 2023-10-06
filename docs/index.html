@@ -14,6 +14,8 @@
       
       
       
+        <link rel="next" href="usage/">
+      
       
         
       
@@ -288,22 +290,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#usage" class="md-nav__link">
+  <a href="#installation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Usage
+        Installation
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Usage">
+    <nav class="md-nav" aria-label="Installation">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#creating-a-sandbox" class="md-nav__link">
+  <a href="#npm" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Creating a sandbox
+        NPM
       
     </span>
   </a>
@@ -311,21 +313,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#setting-the-sandbox-attribute-on-the-iframe" class="md-nav__link">
+  <a href="#cdn" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Setting the sandbox= attribute on the iframe
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#resetting-a-sandbox" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Resetting a Sandbox
+        CDN
       
     </span>
   </a>
@@ -341,6 +332,31 @@
   
 </nav>
       
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="usage/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -377,70 +393,20 @@
 <h2 id="a-quick-note">A quick note</h2>
 <p>Any data inside of the sandbox iframe is not trustable as any site can write to it. Do not store data there, it is not a trusted environment.</p>
 <p>Also, don't run this on any domains, or subdomains of any domain that you have sensitive information on - the best plan of action is to just use the dedicated domain <a href="https://sandboxjs.foo">sandboxjs.foo</a> outside of testing.</p>
-<h2 id="usage">Usage</h2>
-<p>documentation is incomplete ok</p>
-<h3 id="creating-a-sandbox">Creating a sandbox</h3>
-<div class="highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;module&quot;</span><span class="p">&gt;</span>
-<span class="w">  </span><span class="k">import</span><span class="w"> </span><span class="nx">SbJS</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;https://sandboxjs.foo/lib/lib.mjs&#39;</span><span class="p">;</span><span class="w"> </span><span class="c1">// lib is also exposed as window.SandboxJS - use https://sandboxjs.foo/lib/lib.cjs alongside the window object if you&#39;re on commonjs.</span>
-<span class="w">  </span><span class="p">(</span><span class="k">async</span><span class="p">()=&gt;{</span>
-<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">sbx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="p">(</span><span class="ow">new</span><span class="w"> </span><span class="nx">SandboxJS</span><span class="p">()</span>
-<span class="w">                            </span><span class="p">.</span><span class="nx">init</span><span class="p">());</span><span class="w"> </span><span class="c1">// resolves when the iframe is loaded and ready to go - this should be called before any other methods. You are not required to chain this, but you can.</span>
-<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">returnValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">sbx</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="s1">&#39;alert(window.location.href);\nreturn `Hi from ${window.location.href}`;&#39;</span><span class="p">)</span><span class="w"> </span><span class="c1">// alerts &#39;https://sandboxjs.foo/&#39; and returns &#39;Hi from https://sandboxjs.foo/&#39;</span>
-<span class="w">  </span><span class="p">})();</span>
-<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
-</code></pre></div>
-<h3 id="setting-the-sandbox-attribute-on-the-iframe">Setting the sandbox= attribute on the iframe</h3>
-<div class="highlight"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">sbx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">SandboxJS</span><span class="p">();</span>
-<span class="nx">sbx</span><span class="p">.</span><span class="nx">sandbox</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;allow-modals&#39;</span><span class="p">);</span><span class="w"> </span><span class="c1">// adds the allow-modals sandbox attribute to the iframe</span>
-<span class="nx">sbx</span><span class="p">.</span><span class="nx">sandbox</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="s1">&#39;allow-modals&#39;</span><span class="p">);</span><span class="w"> </span><span class="c1">// removes the allow-modals sandbox attribute from the iframe</span>
-</code></pre></div>
-<h3 id="resetting-a-sandbox">Resetting a Sandbox</h3>
-<blockquote>
-<p>Sandboxes can have their state messed up - ie via reload()s, or via navigation.<br/>
-In addition, if you modify params, or the ADD to sandbox options, they can't retroactively be applied to the sandbox.<br/>
-In scenarios like these, you need to reset the sandbox.</p>
-</blockquote>
-<p>To reset a sandbox, you need to kill() it, and re-init() it.</p>
-<p>An example of doing this for navigation is this:
-<div class="highlight"><pre><span></span><code><span class="c1">// Create a sandbox</span>
-<span class="kd">const</span><span class="w"> </span><span class="nx">sbx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="p">(</span><span class="ow">new</span><span class="w"> </span><span class="nx">SandboxJS</span><span class="p">()</span>
-<span class="w">                            </span><span class="p">.</span><span class="nx">init</span><span class="p">());</span>
-
-<span class="c1">// Mess up the sandbox</span>
-<span class="nx">sbx</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="sb">`window.location.href = &#39;https://example.com/&#39;`</span><span class="p">);</span>
-
-<span class="c1">// Reset the sandbox</span>
-<span class="nx">sbx</span><span class="p">.</span><span class="nx">kill</span><span class="p">();</span>
-<span class="k">await</span><span class="w"> </span><span class="nx">sbx</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span>
-
-<span class="c1">// The sandbox is now reset</span>
-<span class="k">await</span><span class="w"> </span><span class="nx">sbx</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="sb">`return window.location.href;`</span><span class="p">);</span><span class="w"> </span><span class="c1">// returns &#39;https://sandboxjs.foo/&#39;, not &#39;https://example.com/&#39;</span>
-</code></pre></div></p>
-<p>Another example of changing sandbox options post-load is this:
-<div class="highlight"><pre><span></span><code><span class="c1">// Create a sandbox</span>
-<span class="kd">const</span><span class="w"> </span><span class="nx">sbx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">SandboxJS</span><span class="p">();</span>
-<span class="nx">sbx</span><span class="p">.</span><span class="nx">sandbox</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="s1">&#39;allow-modals&#39;</span><span class="p">);</span><span class="w"> </span><span class="c1">// you can call .remove() on any of the sandbox options, and it&#39;ll remove them from the sandbox</span>
-<span class="k">await</span><span class="w"> </span><span class="nx">sbx</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span>
-
-<span class="c1">// Run something that&#39;s disallowed in the current policy</span>
-<span class="k">await</span><span class="w"> </span><span class="nx">sbx</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="sb">`alert(&#39;Hai!&#39;)`</span><span class="p">);</span><span class="w"> </span><span class="c1">// doesn&#39;t alert</span>
-
-<span class="c1">// Re-allow it</span>
-<span class="nx">sbx</span><span class="p">.</span><span class="nx">sandbox</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;allow-modals&#39;</span><span class="p">);</span>
-
-<span class="c1">// Run something that&#39;s now allowed in the current policy</span>
-<span class="k">await</span><span class="w"> </span><span class="nx">sbx</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="sb">`alert(&#39;Hai 2!&#39;)`</span><span class="p">);</span><span class="w"> </span><span class="c1">// still doesn&#39;t alert</span>
-
-<span class="c1">// Reset the sandbox</span>
-<span class="nx">sbx</span><span class="p">.</span><span class="nx">kill</span><span class="p">();</span>
-<span class="k">await</span><span class="w"> </span><span class="nx">sbx</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span>
-
-<span class="c1">// The sandbox is now reset</span>
-<span class="k">await</span><span class="w"> </span><span class="nx">sbx</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="sb">`alert(&#39;Hai 3!&#39;)`</span><span class="p">);</span><span class="w"> </span><span class="c1">// alerts &#39;Hai 3!&#39; successfully</span>
-</code></pre></div></p>
-<blockquote>
-<p>It's worth noting that, as the nested iframe's sandbox parameters are queried via a URL query parameter, if you remove a sandbox attribute post-init(), you can re-add it via sbx.sandbox.add() and it'll work again. This is, however, discouraged.</p>
-</blockquote>
+<h2 id="installation">Installation</h2>
+<h3 id="npm">NPM</h3>
+<p><code>pnpm i sboxjs</code></p>
+<h3 id="cdn">CDN</h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">CJS</label><label for="__tabbed_1_2">MJS</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>Load <code>https://sandboxjs.foo/lib/lib.cjs</code> in a script tag - e.g. <code>&lt;script src="https://sandboxjs.foo/lib/lib.cjs"&gt;&lt;/script&gt;</code></p>
+</div>
+<div class="tabbed-block">
+<p>Load <code>https://sandboxjs.foo/lib/lib.mjs</code> from an import - e.g. <code>import SandboxJS from 'https://sandboxjs.foo/lib/lib.mjs';</code></p>
+</div>
+</div>
+</div>
 
   
   
@@ -467,6 +433,27 @@ In scenarios like these, you need to reset the sandbox.</p>
       
         <footer class="md-footer">
   
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+        
+          
+          <a href="usage/" class="md-footer__link md-footer__link--next" aria-label="Next: Usage" rel="next">
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  Next
+                </span>
+                Usage
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
     
   
   <div class="md-footer-meta md-typeset">
