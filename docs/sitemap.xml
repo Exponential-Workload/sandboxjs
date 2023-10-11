@@ -2,22 +2,22 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://sandboxjs.foo/docs/</loc>
-         <lastmod>2023-10-06</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sandboxjs.foo/docs/installation/</loc>
-         <lastmod>2023-10-06</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sandboxjs.foo/docs/mirrors/</loc>
-         <lastmod>2023-10-06</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sandboxjs.foo/docs/usage/</loc>
-         <lastmod>2023-10-06</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
